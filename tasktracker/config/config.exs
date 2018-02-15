@@ -26,8 +26,9 @@ config :guardian, Guardian,
   issuer: "TaskTracker",
   ttl: {30, :days},
   verify_issuer: true,
+  verify_module: Guardian.JWT,
   serializer: TasktrackerWeb.GuardianSerializer,
-  secret_key: Mix.env()
+  secret_key: "anUG...A4qfP5"
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

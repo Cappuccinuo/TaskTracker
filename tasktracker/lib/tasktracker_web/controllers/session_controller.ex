@@ -31,10 +31,17 @@ defmodule TasktrackerWeb.SessionController do
 
   defp login(conn, user) do
     conn
-    |> Guardian.Plug.sign_in(user, :api)
+    |> Guardian.Plug.sign_in(user, :access)
   end
 
   def delete(conn, _) do
     conn
+    |> logout
+    |> put_flash(:info, "See you later!")
+    |> redirect(to: page_path(conn, :index))
+  end
+
+  defp logout(conn) do
+    Guardian.Plug.sign_out(conn)
   end
 end

@@ -13,8 +13,16 @@ defmodule TasktrackerWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :with_session do
+    plug Guardian.Plug.VerifySession   # checks for a token existence in a session
+    plug Guardian.Plug.LoadResource    # fetches a value from token's sub field and
+                                       # serializes it with the serializer module
+                                       # we've created earlier
+    plug TasktrackerWeb.CurrentUser
+  end
+
   scope "/", TasktrackerWeb do
-    pipe_through :browser # Use the default browser stack
+    pipe_through [:browser, :with_session] # Use the default browser stack
 
     get "/", PageController, :index
     resources "/users", UserController#, only: [:show, :new, :create]
