@@ -12,6 +12,19 @@
   </head>
 
   <body>
+    <header class="header">
+      <nav role="navigation">
+        <ul class="nav nav-pills pull-right">
+            <li>
+              <%= link "Register", to: user_path(@conn, :new) %>
+            </li>
+            <li>
+              <%= link "Sign in", to: session_path(@conn, :new) %>
+            </li>
+        </ul>
+      </nav>
+      <span class="logo"></span>
+    </header>
     <div class="container">
       <%= if get_flash(@conn, :info) do %>
         <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
