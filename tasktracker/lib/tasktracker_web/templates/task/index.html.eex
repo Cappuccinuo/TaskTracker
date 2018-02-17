@@ -11,6 +11,12 @@
       <th>
         Time
       </th>
+      <th>
+        Initiator
+      </th>
+      <th>
+        Worker
+      </th>
       <th></th>
     </tr>
   </thead>
@@ -24,6 +30,12 @@
       </td>
       <td>
         <%= task.time %>
+      </td>
+      <td>
+        <%= task.initiator %>
+      </td>
+      <td>
+        <%= task.user_id %>
       </td>
 
       <td class="text-right">
