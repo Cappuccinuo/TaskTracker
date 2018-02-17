@@ -7,7 +7,9 @@ defmodule Tasktracker.Mission.Task do
   schema "tasks" do
     field :description, :string
     field :title, :string
-    belongs_to :user, Tasktracker.Accounts.User
+    field :completed, :boolean, default: false
+    field :time, :integer, default: 0
+    # many_to_many :users, Tasktracker.Accounts.User
 
     timestamps()
   end
@@ -15,7 +17,7 @@ defmodule Tasktracker.Mission.Task do
   @doc false
   def changeset(%Task{} = task, attrs) do
     task
-    |> cast(attrs, [:title, :description, :user_id])
-    |> validate_required([:title, :description, :user_id])
+    |> cast(attrs, [:title, :description, :completed, :time])
+    |> validate_required([:title, :description, :completed, :time])
   end
 end

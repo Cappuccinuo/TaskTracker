@@ -28,6 +28,7 @@ defmodule TasktrackerWeb.Router do
     resources "/users", UserController#, only: [:show, :new, :create]
     resources "/tasks", TaskController
     resources "/sessions", SessionController
+
   end
 
   # Other scopes may use custom stacks.

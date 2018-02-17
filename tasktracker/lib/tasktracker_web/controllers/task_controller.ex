@@ -3,18 +3,24 @@ defmodule TasktrackerWeb.TaskController do
 
   alias Tasktracker.Mission
   alias Tasktracker.Mission.Task
+  alias Tasktracker.Repo
 
-  def index(conn, _params) do
+  def action(conn, _) do
+    apply(__MODULE__, action_name(conn),
+            [conn, conn.params, conn.assigns.current_user])
+  end
+
+  def index(conn, _params, _current_user) do
     tasks = Mission.list_tasks()
     render(conn, "index.html", tasks: tasks)
   end
 
-  def new(conn, _params) do
+  def new(conn, _params, _current_user) do
     changeset = Mission.change_task(%Task{})
     render(conn, "new.html", changeset: changeset)
   end
 
-  def create(conn, %{"task" => task_params}) do
+  def create(conn, %{"task" => task_params}, _current_user) do
     case Mission.create_task(task_params) do
       {:ok, task} ->
         conn
@@ -25,18 +31,18 @@ defmodule TasktrackerWeb.TaskController do
     end
   end
 
-  def show(conn, %{"id" => id}) do
+  def show(conn, %{"id" => id}, _current_user) do
     task = Mission.get_task!(id)
     render(conn, "show.html", task: task)
   end
 
-  def edit(conn, %{"id" => id}) do
+  def edit(conn, %{"id" => id}, _current_user) do
     task = Mission.get_task!(id)
     changeset = Mission.change_task(task)
     render(conn, "edit.html", task: task, changeset: changeset)
   end
 
-  def update(conn, %{"id" => id, "task" => task_params}) do
+  def update(conn, %{"id" => id, "task" => task_params}, _current_user) do
     task = Mission.get_task!(id)
 
     case Mission.update_task(task, task_params) do
@@ -49,12 +55,22 @@ defmodule TasktrackerWeb.TaskController do
     end
   end
 
-  def delete(conn, %{"id" => id}) do
+  def delete(conn, %{"id" => id}, _current_user) do
     task = Mission.get_task!(id)
     {:ok, _task} = Mission.delete_task(task)
 
     conn
     |> put_flash(:info, "Task deleted successfully.")
     |> redirect(to: task_path(conn, :index))
+  end
+
+  defp user_tasks(user) do
+    assoc(user, :tasks)
+  end
+
+  defp user_task_by_id(user, task_id) do
+    user
+    |> user_tasks
+    |> Repo.get(task_id)
   end
 end
