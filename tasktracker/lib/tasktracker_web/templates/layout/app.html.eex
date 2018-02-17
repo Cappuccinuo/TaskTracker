@@ -17,6 +17,9 @@
         <ul class="nav nav-pills pull-right">
           <%= if @current_user do %>
             <li>
+              <%= link "New task", to: task_path(@conn, :new) %>
+            </li>
+            <li>
               <%= @current_user.name %> (<%= @current_user.id %>)
             </li>
             <li>

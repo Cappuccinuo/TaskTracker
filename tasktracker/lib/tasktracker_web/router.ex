@@ -26,6 +26,7 @@ defmodule TasktrackerWeb.Router do
 
     get "/", PageController, :index
     resources "/users", UserController#, only: [:show, :new, :create]
+    resources "/tasks", TaskController
     resources "/sessions", SessionController
   end
 

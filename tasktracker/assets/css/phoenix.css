@@ -22,13 +22,13 @@ body, form, ul, table {
   border-bottom: 1px solid #e5e5e5;
 }
 .logo {
-  width: 200px;
+  width: 180px;
   height: 100px;
   display: inline-block;
   margin-bottom: 1em;
   margin-left: 3em;
   background-image: url("/images/tasktrackerlogo.png");
-  background-size: 200px 100px;
+  background-size: 180px 100px;
 }
 
 /* Everything but the jumbotron gets side spacing for mobile first views */
