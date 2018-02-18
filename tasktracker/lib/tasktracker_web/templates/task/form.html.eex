@@ -39,3 +39,29 @@
     <%= submit "Submit", class: "btn btn-primary" %>
   </div>
 <% end %>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>
+        Id
+      </th>
+      <th>Email</th>
+      <th>Name</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<h4>User lists</h4>
+<%= for user <- @users do %>
+    <tr>
+      <td>
+        <%= user.id %>
+      </td>
+      <td><%= user.email %></td>
+      <td><%= user.name %></td>
+    </tr>
+<% end %>
+  </tbody>
+</table>

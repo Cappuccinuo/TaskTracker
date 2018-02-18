@@ -23,7 +23,10 @@
               <%= link "All tasks", to: task_path(@conn, :index) %>
             </li>
             <li>
-              <%= link "My task", to: task_path(@conn, :index) %>
+              <%= link "Assigned tasks", to: page_path(@conn, :release) %>
+            </li>
+            <li>
+              <%= link "Todo tasks", to: page_path(@conn, :feed) %>
             </li>
             <li>
               <%= @current_user.name %> (<%= @current_user.id %>)

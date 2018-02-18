@@ -17,22 +17,24 @@ defmodule TasktrackerWeb.TaskController do
 
   def index(conn, _params, _current_user) do
     tasks = Mission.list_tasks()
-    render(conn, "index.html", tasks: tasks)
+    users = Accounts.list_users()
+    render(conn, "index.html", tasks: tasks, users: users)
   end
 
-  #def index(conn, %{"user_id" => user_id}, _current_user) do
-  #  user = User |> Repo.get!(user_id)
+  #def index(conn, _params, current_user) do
+  #  user = Accounts.User |> Repo.get!(current_user.id)
   #  tasks =
   #    user
   #    |> user_tasks
   #    |> Repo.all
   #    |> Repo.preload(:user)
-  #  render(conn, "index.html", tasks: tasks, user: user)
+  #  render(conn, "index.html", tasks: tasks)
   #end
 
   def new(conn, _params, _current_user) do
     changeset = Mission.change_task(%Task{})
-    render(conn, "new.html", changeset: changeset)
+    users = Accounts.list_users()
+    render(conn, "new.html", users: users, changeset: changeset)
   end
 
   def create(conn, %{"task" => task_params}, _current_user) do
@@ -48,6 +50,9 @@ defmodule TasktrackerWeb.TaskController do
         |> put_flash(:info, "Task created successfully.")
         |> redirect(to: task_path(conn, :show, task))
       {:error,changeset} ->
+        #conn
+        #|> put_flash(:info, "Invalid.")
+        #|> redirect(to: task_path(conn, :index))
         render(conn, "new.html", changeset: changeset)
     end
   end
@@ -65,8 +70,9 @@ defmodule TasktrackerWeb.TaskController do
 
   def edit(conn, %{"id" => id}, _current_user) do
     task = Mission.get_task!(id)
+    users = Accounts.list_users()
     changeset = Mission.change_task(task)
-    render(conn, "edit.html", task: task, changeset: changeset)
+    render(conn, "edit.html", task: task, users: users, changeset: changeset)
   end
 
   def update(conn, %{"id" => id, "task" => task_params}, _current_user) do
@@ -104,7 +110,8 @@ defmodule TasktrackerWeb.TaskController do
   def check_task_owner(conn, _params) do
     %{params: %{"id" => task_id}} = conn
 
-    if Repo.get(Task, task_id).user_id == conn.assigns.current_user.id do
+    if Repo.get(Task, task_id).user_id == conn.assigns.current_user.id
+      or Repo.get(Task, task_id).worker_id == conn.assigns.current_user.id do
       conn
     else
       conn
