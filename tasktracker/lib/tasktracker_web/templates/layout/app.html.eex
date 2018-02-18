@@ -17,10 +17,13 @@
         <ul class="nav nav-pills pull-right">
           <%= if @current_user do %>
             <li>
-              <%= link "All task", to: task_path(@conn, :index) %>
+              <%= link "All users", to: user_path(@conn, :index) %>
             </li>
             <li>
-              <%= link "My task", to: task_path(@conn, :new) %>
+              <%= link "All tasks", to: task_path(@conn, :index) %>
+            </li>
+            <li>
+              <%= link "My task", to: task_path(@conn, :index) %>
             </li>
             <li>
               <%= @current_user.name %> (<%= @current_user.id %>)

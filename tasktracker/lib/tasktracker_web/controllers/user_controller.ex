@@ -4,6 +4,8 @@ defmodule TasktrackerWeb.UserController do
   alias Tasktracker.Accounts
   alias Tasktracker.Accounts.User
 
+  #plug :check_user_owner when action in [:update, :edit, :delete]
+
   def index(conn, _params) do
     users = Accounts.list_users()
     render(conn, "index.html", users: users)
@@ -56,5 +58,16 @@ defmodule TasktrackerWeb.UserController do
     conn
     |> put_flash(:info, "User deleted successfully.")
     |> redirect(to: user_path(conn, :index))
+  end
+
+  def check_user_owner(conn, %{"id" => id}) do
+    if id == conn.assigns.current_user.id do
+      conn
+    else
+      conn
+      |> put_flash(:error, "You cannot edit that")
+      |> redirect(to: user_path(conn, :index))
+      |> halt()
+    end
   end
 end

@@ -3,7 +3,12 @@ defmodule TasktrackerWeb.TaskController do
 
   alias Tasktracker.Mission
   alias Tasktracker.Mission.Task
+  alias Tasktracker.Accounts
   alias Tasktracker.Repo
+
+  plug :check_task_owner when action in [:update, :edit, :delete]
+
+
 
   def action(conn, _) do
     apply(__MODULE__, action_name(conn),
@@ -15,18 +20,34 @@ defmodule TasktrackerWeb.TaskController do
     render(conn, "index.html", tasks: tasks)
   end
 
+  #def index(conn, %{"user_id" => user_id}, _current_user) do
+  #  user = User |> Repo.get!(user_id)
+  #  tasks =
+  #    user
+  #    |> user_tasks
+  #    |> Repo.all
+  #    |> Repo.preload(:user)
+  #  render(conn, "index.html", tasks: tasks, user: user)
+  #end
+
   def new(conn, _params, _current_user) do
     changeset = Mission.change_task(%Task{})
     render(conn, "new.html", changeset: changeset)
   end
 
   def create(conn, %{"task" => task_params}, _current_user) do
-    case Mission.create_task(task_params) do
+    #%{"worker_id" => worker_id} = task_params
+    #user = Accounts.User |> Repo.get!(worker_id)
+    #changeset = user
+    changeset = conn.assigns.current_user
+      |> Ecto.build_assoc(:tasks)
+      |> Task.changeset(task_params)
+    case Repo.insert(changeset) do
       {:ok, task} ->
         conn
         |> put_flash(:info, "Task created successfully.")
         |> redirect(to: task_path(conn, :show, task))
-      {:error, %Ecto.Changeset{} = changeset} ->
+      {:error,changeset} ->
         render(conn, "new.html", changeset: changeset)
     end
   end
@@ -35,6 +56,12 @@ defmodule TasktrackerWeb.TaskController do
     task = Mission.get_task!(id)
     render(conn, "show.html", task: task)
   end
+
+  #def show(conn, %{"user_id" => user_id, "id" => id}, _current_user) do
+  #  user = User |> Repo.get!(user_id)
+  #  task = user |> user_task_by_id(id) |> Repo.preload(:user)
+  #  render(conn, "show.html", task: task, user: user)
+  #end
 
   def edit(conn, %{"id" => id}, _current_user) do
     task = Mission.get_task!(id)
@@ -65,12 +92,25 @@ defmodule TasktrackerWeb.TaskController do
   end
 
   defp user_tasks(user) do
-    assoc(user, :tasks)
+    Ecto.assoc(user, :tasks)
   end
 
   defp user_task_by_id(user, task_id) do
     user
     |> user_tasks
     |> Repo.get(task_id)
+  end
+
+  def check_task_owner(conn, _params) do
+    %{params: %{"id" => task_id}} = conn
+
+    if Repo.get(Task, task_id).user_id == conn.assigns.current_user.id do
+      conn
+    else
+      conn
+      |> put_flash(:error, "You cannot edit that")
+      |> redirect(to: task_path(conn, :index))
+      |> halt()
+    end
   end
 end

@@ -9,9 +9,8 @@ defmodule Tasktracker.Mission.Task do
     field :title, :string
     field :completed, :boolean, default: false
     field :time, :integer, default: 0
-    field :initiator, :integer
     belongs_to :user, Tasktracker.Accounts.User
-    # many_to_many :users, Tasktracker.Accounts.User
+    belongs_to :worker, Tasktracker.Accounts.User
 
     timestamps()
   end
@@ -19,7 +18,7 @@ defmodule Tasktracker.Mission.Task do
   @doc false
   def changeset(%Task{} = task, attrs) do
     task
-    |> cast(attrs, [:title, :description, :completed, :time, :initiator, :user_id])
-    |> validate_required([:title, :description, :completed, :time, :initiator, :user_id])
+    |> cast(attrs, [:title, :description, :completed, :time, :user_id, :worker_id])
+    |> validate_required([:title, :description, :completed, :time, :user_id, :worker_id])
   end
 end
